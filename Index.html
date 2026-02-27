@@ -2,113 +2,179 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Calendar App</title>
+<title>Apple Glass Planner</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+}
+
 body{
-    margin:0;
-    font-family:Arial;
-    display:flex;
-    height:100vh;
+  background:linear-gradient(135deg,#0f2027,#2c5364,#1c1c1c);
+  color:white;
+  min-height:100vh;
+  padding:20px;
 }
 
-/* LEFT PANEL */
-.left{
-    width:25%;
-    background:#0d2b36;
-    color:white;
-    padding:20px;
+.app{
+  display:flex;
+  gap:20px;
+  max-width:1400px;
+  margin:auto;
 }
 
-/* CENTER CALENDAR */
-.center{
-    width:50%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:#f4f4f4;
+.glass{
+  backdrop-filter:blur(20px);
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.4);
 }
 
-/* RIGHT TASK PANEL */
-.right{
-    width:25%;
-    background:#e9e9e9;
-    padding:20px;
-    display:none;
-    flex-direction:column;
+/* Left Tools */
+.tools{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
 }
 
-.calendar{
-    background:white;
-    padding:20px;
-    border-radius:10px;
-    width:320px;
-}
+/* Calendar */
+.calendar{ flex:1; }
 
 .header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
 }
 
-.days, .dates{
-    display:grid;
-    grid-template-columns:repeat(7,1fr);
-    text-align:center;
+.header button{
+  background:none;border:none;color:white;font-size:22px;cursor:pointer;
 }
+
+.days,.dates{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  text-align:center;
+}
+
+.days div{opacity:0.6;margin-bottom:10px;}
 
 .dates div{
-    padding:10px;
-    cursor:pointer;
+  padding:12px;
+  border-radius:50%;
+  cursor:pointer;
+  position:relative;
 }
 
-.dates div:hover{
-    background:#ddd;
-    border-radius:50%;
+.dates div:hover{background:rgba(255,255,255,0.1);}
+.selected{background:rgba(255,255,255,0.25);}
+
+.dot{
+  width:6px;height:6px;background:#4cd964;
+  border-radius:50%;
+  position:absolute;bottom:5px;left:50%;
+  transform:translateX(-50%);
 }
 
-.selected{
-    background:black;
-    color:white;
-    border-radius:50%;
+/* Tasks */
+.tasks{
+  flex:1;
+  overflow-y:auto;
 }
 
-/* calculator */
+textarea,input{
+  width:100%;
+  margin-top:10px;
+  padding:10px;
+  border:none;
+  border-radius:12px;
+  background:rgba(255,255,255,0.1);
+  color:white;
+}
+
+button.save{
+  margin-top:10px;
+  padding:10px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(45deg,#4cd964,#5ac8fa);
+  cursor:pointer;
+  font-weight:bold;
+}
+
+ul{list-style:none;margin-top:15px;}
+
+li{
+  background:rgba(255,255,255,0.08);
+  padding:12px;
+  border-radius:15px;
+  margin-bottom:12px;
+}
+
+.completed{opacity:0.5;text-decoration:line-through;}
+
+.meta{font-size:12px;opacity:0.6;margin-top:5px;}
+
+.actions button{
+  background:none;border:none;color:#5ac8fa;
+  margin-right:10px;cursor:pointer;
+}
+
+/* Calculator */
 .calc input{
-    width:100%;
-    height:40px;
-    margin-bottom:10px;
-    font-size:18px;
+  margin-bottom:10px;
+  text-align:right;
+  font-size:18px;
 }
 
 .calc button{
-    width:23%;
-    margin:1%;
-    height:40px;
-    font-size:16px;
+  width:23%;
+  margin:1%;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  background:rgba(255,255,255,0.15);
+  color:white;
+  cursor:pointer;
 }
 
-/* stopwatch */
-.stopwatch{
-    margin-top:30px;
-}
-
+/* Stopwatch */
+.stopwatch h2{margin-bottom:10px;}
 .stopwatch button{
-    margin:5px;
+  padding:6px 10px;
+  border:none;
+  border-radius:10px;
+  background:rgba(255,255,255,0.15);
+  color:white;
+  margin-right:5px;
+  cursor:pointer;
+}
+
+/* Responsive */
+@media(max-width:900px){
+  .app{flex-direction:column;}
 }
 </style>
 </head>
 
 <body>
 
-<!-- LEFT -->
-<div class="left">
+<div class="app">
 
+<!-- LEFT SIDE TOOLS -->
+<div class="tools">
+
+<div class="glass calc">
 <h3>Calculator</h3>
-<div class="calc">
 <input type="text" id="calcScreen">
-<br>
+<div>
 <button onclick="addCalc('7')">7</button>
 <button onclick="addCalc('8')">8</button>
 <button onclick="addCalc('9')">9</button>
@@ -129,9 +195,10 @@ body{
 <button onclick="clearCalc()">C</button>
 <button onclick="addCalc('+')">+</button>
 </div>
+</div>
 
+<div class="glass stopwatch">
 <h3>Stopwatch</h3>
-<div class="stopwatch">
 <h2 id="time">00:00:00</h2>
 <button onclick="start()">Start</button>
 <button onclick="stop()">Stop</button>
@@ -140,14 +207,12 @@ body{
 
 </div>
 
-<!-- CENTER -->
-<div class="center">
-
-<div class="calendar">
+<!-- CENTER CALENDAR -->
+<div class="glass calendar">
 <div class="header">
-<button onclick="changeMonth(-1)"><</button>
+<button onclick="changeMonth(-1)">‹</button>
 <h2 id="monthYear"></h2>
-<button onclick="changeMonth(1)">></button>
+<button onclick="changeMonth(1)">›</button>
 </div>
 
 <div class="days">
@@ -158,146 +223,167 @@ body{
 <div class="dates" id="dates"></div>
 </div>
 
-</div>
+<!-- RIGHT TASKS -->
+<div class="glass tasks">
+<h3 id="selectedDate">Select Date</h3>
 
-<!-- RIGHT -->
-<div class="right" id="taskPanel">
-<h3 id="selectedDate"></h3>
-<input type="text" id="taskInput" placeholder="Add task">
-<button onclick="saveTask()">Save Task</button>
+<textarea id="taskInput" placeholder="Write task with emoji 😊"></textarea>
+<input type="time" id="taskTime">
+<button class="save" onclick="saveTask()">Save Task</button>
+
 <ul id="taskList"></ul>
 </div>
 
-<script>
+</div>
 
-/* CALENDAR */
-let date = new Date();
-let currentMonth = date.getMonth();
-let currentYear = date.getFullYear();
-let selectedDateKey = "";
+<script>
+let now=new Date();
+let currentMonth=now.getMonth();
+let currentYear=now.getFullYear();
+let selectedKey="";
 
 function renderCalendar(){
-    const monthYear = document.getElementById("monthYear");
-    const dates = document.getElementById("dates");
-    dates.innerHTML = "";
+  const dates=document.getElementById("dates");
+  dates.innerHTML="";
+  document.getElementById("monthYear").innerText=
+  new Date(currentYear,currentMonth)
+  .toLocaleString("default",{month:"long"})+" "+currentYear;
 
-    const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-    const lastDate = new Date(currentYear, currentMonth+1, 0).getDate();
+  let firstDay=new Date(currentYear,currentMonth,1).getDay();
+  let lastDate=new Date(currentYear,currentMonth+1,0).getDate();
 
-    monthYear.innerText = 
-        new Date(currentYear, currentMonth)
-        .toLocaleString("default",{month:"long"}) 
-        + " " + currentYear;
+  for(let i=0;i<firstDay;i++) dates.innerHTML+="<div></div>";
 
-    for(let i=0;i<firstDay;i++){
-        dates.innerHTML += "<div></div>";
+  for(let d=1;d<=lastDate;d++){
+    let div=document.createElement("div");
+    div.innerText=d;
+    div.onclick=()=>selectDate(d);
+
+    let key=currentYear+"-"+currentMonth+"-"+d;
+    let tasks=JSON.parse(localStorage.getItem(key))||[];
+    if(tasks.length>0){
+      let dot=document.createElement("div");
+      dot.className="dot";
+      div.appendChild(dot);
     }
 
-    for(let i=1;i<=lastDate;i++){
-        let div = document.createElement("div");
-        div.innerText = i;
-        div.onclick = () => selectDate(i);
-        dates.appendChild(div);
-    }
+    dates.appendChild(div);
+  }
 }
 
 function changeMonth(step){
-    currentMonth += step;
-    if(currentMonth < 0){
-        currentMonth = 11;
-        currentYear--;
-    }
-    if(currentMonth > 11){
-        currentMonth = 0;
-        currentYear++;
-    }
-    renderCalendar();
+  currentMonth+=step;
+  if(currentMonth<0){currentMonth=11;currentYear--;}
+  if(currentMonth>11){currentMonth=0;currentYear++;}
+  renderCalendar();
 }
 
-function selectDate(day){
-    selectedDateKey = currentYear+"-"+currentMonth+"-"+day;
-    document.getElementById("taskPanel").style.display="flex";
-    document.getElementById("selectedDate").innerText =
-        day + " " +
-        new Date(currentYear,currentMonth)
-        .toLocaleString("default",{month:"long"}) +
-        " " + currentYear;
-    loadTasks();
+function selectDate(d){
+  selectedKey=currentYear+"-"+currentMonth+"-"+d;
+  document.getElementById("selectedDate").innerText=
+  d+" "+
+  new Date(currentYear,currentMonth)
+  .toLocaleString("default",{month:"long"})+" "+currentYear;
+  loadTasks();
 }
-
-/* TASK SYSTEM */
 
 function saveTask(){
-    let input = document.getElementById("taskInput");
-    if(input.value==="") return;
+  if(!selectedKey)return;
+  let text=document.getElementById("taskInput").value;
+  let time=document.getElementById("taskTime").value;
+  if(!text)return;
 
-    let tasks = JSON.parse(localStorage.getItem(selectedDateKey)) || [];
-    tasks.push(input.value);
-    localStorage.setItem(selectedDateKey, JSON.stringify(tasks));
-    input.value="";
-    loadTasks();
+  let tasks=JSON.parse(localStorage.getItem(selectedKey))||[];
+
+  tasks.push({
+    text:text,
+    time:time,
+    created:new Date().toLocaleString(),
+    completed:null,
+    done:false
+  });
+
+  localStorage.setItem(selectedKey,JSON.stringify(tasks));
+  document.getElementById("taskInput").value="";
+  loadTasks();
+  renderCalendar();
 }
 
 function loadTasks(){
-    let taskList = document.getElementById("taskList");
-    taskList.innerHTML="";
-    let tasks = JSON.parse(localStorage.getItem(selectedDateKey)) || [];
-    tasks.forEach(task=>{
-        let li = document.createElement("li");
-        li.innerText = task;
-        taskList.appendChild(li);
-    });
+  let list=document.getElementById("taskList");
+  list.innerHTML="";
+  let tasks=JSON.parse(localStorage.getItem(selectedKey))||[];
+
+  tasks.forEach((task,i)=>{
+    let li=document.createElement("li");
+    if(task.done) li.classList.add("completed");
+
+    li.innerHTML=`
+    <div contenteditable="true" onblur="editTask(${i},this.innerText)">
+    ${task.text}
+    </div>
+    <div>⏰ ${task.time||"No time"}</div>
+    <div class="meta">
+    Created: ${task.created}<br>
+    Completed: ${task.completed||"-"}
+    </div>
+    <div class="actions">
+      <button onclick="toggleDone(${i})">✓</button>
+      <button onclick="deleteTask(${i})">🗑</button>
+    </div>
+    `;
+    list.appendChild(li);
+  });
 }
 
-/* CALCULATOR */
-
-function addCalc(val){
-    document.getElementById("calcScreen").value += val;
+function editTask(i,newText){
+  let tasks=JSON.parse(localStorage.getItem(selectedKey));
+  tasks[i].text=newText;
+  localStorage.setItem(selectedKey,JSON.stringify(tasks));
 }
 
+function toggleDone(i){
+  let tasks=JSON.parse(localStorage.getItem(selectedKey));
+  tasks[i].done=!tasks[i].done;
+  tasks[i].completed=tasks[i].done?new Date().toLocaleString():null;
+  localStorage.setItem(selectedKey,JSON.stringify(tasks));
+  loadTasks();
+}
+
+function deleteTask(i){
+  let tasks=JSON.parse(localStorage.getItem(selectedKey));
+  tasks.splice(i,1);
+  localStorage.setItem(selectedKey,JSON.stringify(tasks));
+  loadTasks();
+  renderCalendar();
+}
+
+/* Calculator */
+function addCalc(v){document.getElementById("calcScreen").value+=v;}
 function calculate(){
-    let screen = document.getElementById("calcScreen");
-    screen.value = eval(screen.value);
+  try{
+    document.getElementById("calcScreen").value=
+    eval(document.getElementById("calcScreen").value);
+  }catch{alert("Invalid");}
 }
+function clearCalc(){document.getElementById("calcScreen").value="";}
 
-function clearCalc(){
-    document.getElementById("calcScreen").value="";
-}
-
-/* STOPWATCH */
-
-let seconds=0;
-let interval;
-
-function start(){
-    interval = setInterval(()=>{
-        seconds++;
-        updateTime();
-    },1000);
-}
-
-function stop(){
-    clearInterval(interval);
-}
-
-function reset(){
-    clearInterval(interval);
-    seconds=0;
-    updateTime();
-}
-
-function updateTime(){
-    let hrs = Math.floor(seconds/3600);
-    let mins = Math.floor((seconds%3600)/60);
-    let secs = seconds%60;
-    document.getElementById("time").innerText =
-        String(hrs).padStart(2,'0')+":"+
-        String(mins).padStart(2,'0')+":"+
-        String(secs).padStart(2,'0');
+/* Stopwatch */
+let sec=0,interval;
+function start(){if(!interval){interval=setInterval(()=>{sec++;update();},1000);}}
+function stop(){clearInterval(interval);interval=null;}
+function reset(){stop();sec=0;update();}
+function update(){
+  let h=Math.floor(sec/3600);
+  let m=Math.floor((sec%3600)/60);
+  let s=sec%60;
+  document.getElementById("time").innerText=
+  String(h).padStart(2,'0')+":"+
+  String(m).padStart(2,'0')+":"+
+  String(s).padStart(2,'0');
 }
 
 renderCalendar();
-
 </script>
 
 </body>
